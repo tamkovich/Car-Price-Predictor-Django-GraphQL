@@ -1,5 +1,4 @@
 import numpy as np
-import json
 
 from sklearn.externals import joblib
 
@@ -12,21 +11,11 @@ class Network:
     def __init__(self, model_path=MODEL_PATH):
         self.model = joblib.load(model_path)
 
-    def predict(self, values):
-        year_model = values['year_model']
-        mileage = values['mileage']
-        mark = values['mark']
-        fiscal_power = values['fiscal_power']
-        fuel_type = values['fuel_type']
-
-        user_input = {'year_model': year_model, 'mileage': mileage, 'fiscal_power': fiscal_power,
-                      'fuel_type': fuel_type, 'mark': mark}
-
-        print(user_input)
+    def predict(self, user_input):
         a = self.input_to_one_hot(user_input)
         price_pred = self.model.predict([a])[0]
         price_pred = round(price_pred, 2)
-        return json.dumps({'price': price_pred})
+        return {'price': price_pred}
 
     @staticmethod
     def input_to_one_hot(data):

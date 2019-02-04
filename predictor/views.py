@@ -14,5 +14,10 @@ class PredictorView(View):
 
     def post(self, request, *args, **kwargs):
         network = Network()
-        print(request.POST)
-        return JsonResponse({'price': '100500'})
+        return JsonResponse(network.predict({
+            'year_model': request.POST.get('year_model'),
+            'mileage': request.POST.get('mileage'),
+            'mark': request.POST.get('mark'),
+            'fiscal_power': request.POST.get('fiscal_power'),
+            'fuel_type': request.POST.get('fuel_type'),
+        }))
