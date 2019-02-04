@@ -24,7 +24,8 @@
 
 	<div class="container-contact100">
 		<div class="wrap-contact100">
-			<form id="form_pred" class="contact100-form validate-form" method="post" action="/api">
+			<form id="form_pred" class="contact100-form validate-form" method="post" action="{% url 'car:predictor' %}">
+                {% csrf_token %}
 				<span class="contact100-form-title">
 					Cars Price Prediction
 				</span>
@@ -127,7 +128,8 @@
 	        	/*send the ajax request*/
 	        	$.ajax({
 	        		method : "POST",
-	        		url : window.location.href + 'api',
+	        		{#url : window.location.href + 'api',#}
+                    url: "{% url 'car:predictor' %}",
 	        		data : $('form').serialize(),
 	        		success : function(result){
 	        			var json_result = JSON.parse(result);
