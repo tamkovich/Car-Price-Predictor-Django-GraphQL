@@ -1,4 +1,5 @@
 import graphene
+import django_filters
 
 from graphene import relay, ObjectType
 from graphene_django.types import DjangoObjectType
@@ -27,10 +28,28 @@ class CarNode(DjangoObjectType):
         interfaces = (relay.Node, )
 
 
+class CarFilter(django_filters.FilterSet):
+    # Do case-insensitive lookups on 'name'
+    mark = django_filters.CharFilter(lookup_expr=['iexact'])
+
+    class Meta:
+        model = Car
+        fields = ['price', 'year_model', 'mileage',
+                  'fiscal_power', 'fuel_type', 'mark']
+
+    # @property
+    # def qs(self):
+    #     # The query context can be found in self.request.
+    #     return super(CarFilter, self).qs.filter(owner=self.request.user)
+
+
 class Query(object):
     car = relay.Node.Field(CarNode)
-    all_cars = DjangoFilterConnectionField(CarNode)
-
+    # all_cars = DjangoFilterConnectionField(CarNode)
+    all_cars = DjangoFilterConnectionField(
+        CarNode,
+        filterset_class=CarFilter
+    )
     # all_cars = graphene.List(CarType)
     #
     # car = graphene.Field(
