@@ -13,19 +13,19 @@ def get_ads_urls():
 		# get the page url
 		url = basic_url+str(i)
 		# get the request response
-		r  = requests.get(url)
+		r = requests.get(url)
 		data = r.text
 		# transform it to bs object
 		soup = BeautifulSoup(data, "lxml")
 		# loop over page links
 		for div in soup.findAll('div', {'class': 'item-img'}):
-		    a = div.findAll('a')[0]
-		    urls_list.append(a.get('href'))
-		
+			a = div.findAll('a')[0]
+			urls_list.append(a.get('href'))
 
 	df = pd.DataFrame(data={"url": urls_list})
 	df.to_csv("./ads_urls.csv", sep=',',index=False)
-    		
+
+
 def scrap_ad_data(ad_url):
 	r = requests.get(ad_url)
 	data = r.text
@@ -36,11 +36,13 @@ def scrap_ad_data(ad_url):
 	for i in target_component:
 		results.append(''.join(i.findAll(text=True)).replace('\n',''))
 	return results
-	
+
+
 def write_data_to_csv(data):
 	with open("output.csv", "w") as f:
-	    writer = csv.writer(f)
-	    writer.writerows(data)
+		writer = csv.writer(f)
+		writer.writerows(data)
+
 
 if __name__ == '__main__':
 	# get the ads urls and save them in a file
@@ -59,5 +61,3 @@ if __name__ == '__main__':
 
 	# now that we have all the data we can write it in a csv file
 	write_data_to_csv(final_result)
-
-	
