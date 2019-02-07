@@ -28,28 +28,10 @@ class CarNode(DjangoObjectType):
         interfaces = (relay.Node, )
 
 
-class CarFilter(django_filters.FilterSet):
-    # Do case-insensitive lookups on 'name'
-    mark = django_filters.CharFilter(lookup_expr=['iexact'])
-
-    class Meta:
-        model = Car
-        fields = ['price', 'year_model', 'mileage',
-                  'fiscal_power', 'fuel_type', 'mark']
-
-    # @property
-    # def qs(self):
-    #     # The query context can be found in self.request.
-    #     return super(CarFilter, self).qs.filter(owner=self.request.user)
-
-
-class Query(object):
+class Query(graphene.ObjectType):
     car = relay.Node.Field(CarNode)
-    # all_cars = DjangoFilterConnectionField(CarNode)
-    all_cars = DjangoFilterConnectionField(
-        CarNode,
-        filterset_class=CarFilter
-    )
+    all_cars = DjangoFilterConnectionField(CarNode)
+
     # all_cars = graphene.List(CarType)
     #
     # car = graphene.Field(
@@ -72,3 +54,35 @@ class Query(object):
     #         return Car.objects.filter(mark=mark).first()
     #
     #     return None
+
+
+class CreateCar(graphene.Mutation):
+    price = graphene.Int()
+
+    year_model = graphene.Int()
+    mileage = graphene.Int()
+    fiscal_power = graphene.Int()
+    fuel_type = graphene.String()
+    mark = graphene.String()
+
+    class Arguments:
+        price = graphene.Int()
+
+        year_model = graphene.Int()
+        mileage = graphene.Int()
+        fiscal_power = graphene.Int()
+        fuel_type = graphene.String()
+        mark = graphene.String()
+
+    ok = graphene.Boolean()
+    car = graphene.Field(CarType)
+
+    def mutate(self, info, *args, **kwargs):
+        print(kwargs)
+        car = Car.objects.create(**kwargs)
+        ok = True
+        return CreateCar(car=car, ok=ok)
+
+
+class Mutation(graphene.ObjectType):
+    create_car = CreateCar.Field()
