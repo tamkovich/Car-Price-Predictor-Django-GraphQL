@@ -58,7 +58,7 @@ def get_ads_urls():
         # get the page url
         url = basic_url+str(i)
         # get the request response
-        r  = requests.get(url)
+        r = requests.get(url)
         data = r.text
         # transform it to bs object
         soup = BeautifulSoup(data, "lxml")
@@ -66,7 +66,6 @@ def get_ads_urls():
         for div in soup.findAll('div', {'class': 'item-img'}):
             a = div.findAll('a')[0]
             urls_list.append(a.get('href'))
-
 
     df = pd.DataFrame(data={"url": urls_list})
     df.to_csv("./data/ads_urls.csv", sep=',',index=False)
