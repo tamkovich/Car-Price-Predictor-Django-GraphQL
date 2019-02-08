@@ -6,6 +6,7 @@ from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
 from api.models import Car
+from logic_application.network import Network
 
 
 class CarType(DjangoObjectType):
@@ -84,5 +85,32 @@ class CreateCar(graphene.Mutation):
         return CreateCar(car=car, ok=ok)
 
 
+class PredictCarPrice(graphene.Mutation):
+    price = graphene.Int()
+    
+    year_model = graphene.Int()
+    mileage = graphene.Int()
+    fiscal_power = graphene.Int()
+    fuel_type = graphene.String()
+    mark = graphene.String()
+
+    class Arguments:
+        year_model = graphene.Int()
+        mileage = graphene.Int()
+        fiscal_power = graphene.Int()
+        fuel_type = graphene.String()
+        mark = graphene.String()
+
+    def mutate(self, info, *args, **kwargs):
+        network = Network()
+        print(kwargs)
+        res = network.predict(kwargs)
+        kwargs.update(res)
+        car = Car(**kwargs)
+        print(res)
+        return car
+
+
 class Mutation(graphene.ObjectType):
     create_car = CreateCar.Field()
+    predict_car_price = PredictCarPrice.Field()
